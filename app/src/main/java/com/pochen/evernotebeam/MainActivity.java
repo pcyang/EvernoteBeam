@@ -7,9 +7,9 @@ import android.nfc.NfcAdapter;
 import android.nfc.NfcAdapter.CreateNdefMessageCallback;
 import android.nfc.NfcEvent;
 import android.os.Parcelable;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v4.app.Fragment;
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -49,11 +49,21 @@ public class MainActivity extends ActionBarActivity implements CreateNdefMessage
     public NdefMessage createNdefMessage(NfcEvent event) {
         String text = ("Beam me up, Android!\n\n" +
                 "Beam Time: " + System.currentTimeMillis());
-        NdefRecord mimeRecord = new NdefRecord(
-                NdefRecord.TNF_MIME_MEDIA ,
-                "application/vnd.com.pochen.evernotebeam".getBytes(Charset.forName("US-ASCII")),
-                new byte[0], text.getBytes(Charset.forName("US-ASCII")));
-        NdefMessage msg = new NdefMessage(mimeRecord);
+        NdefMessage msg = new NdefMessage(
+                new NdefRecord[] {
+                        new NdefRecord( NdefRecord.TNF_MIME_MEDIA ,
+                        "application/vnd.com.pochen.evernotebeam".getBytes(Charset.forName("US-ASCII")),
+                        new byte[0], text.getBytes(Charset.forName("US-ASCII")))
+                        /**
+                         * The Android Application Record (AAR) is commented out. When a device
+                         * receives a push with an AAR in it, the application specified in the AAR
+                         * is guaranteed to run. The AAR overrides the tag dispatch system.
+                         * You can add it back in to guarantee that this
+                         * activity starts when receiving a beamed message. For now, this code
+                         * uses the tag dispatch system.
+                         */
+                        //,NdefRecord.createApplicationRecord("com.example.android.beam")
+                });
         return msg;
     }
 
